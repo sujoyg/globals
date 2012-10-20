@@ -1,4 +1,5 @@
-require "erb"
+require 'erb'
+require 'rails'
 
 class Globals
   def self.read(globals_file, env=Rails.env)
@@ -12,7 +13,7 @@ class Globals
     end
   end
 
-  def initialize(globals, env=Rails.env)
+  def initialize(globals, env)
     @globals = globals
     @environment = env
     @cache = {}
