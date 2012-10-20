@@ -3,8 +3,9 @@ require 'rails'
 
 class Globals
   def self.read(globals_file, env=Rails.env)
-    env = env.to_s
+    raise "#{global_file} does not exist." unless File.exists? globals_file
 
+    env = env.to_s
     yaml = YAML.load ERB.new(File.read globals_file).result
     if yaml && yaml.include?(env)
        new(yaml[env], env)
