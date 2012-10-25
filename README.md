@@ -3,14 +3,13 @@
 `globals` is an easy way to define environment specific global constants for Rails applications.
 
 # Setup
-
-# `Gemfile`
+## `Gemfile`
     source 'http://rubygems.org'
 
     ...
     gem 'globals', '~> 0.0.2'
     ...
-# `config/application.rb`
+## `config/application.rb`
     require File.expand_path('../boot', __FILE__)
     require 'globals'
 
@@ -19,7 +18,7 @@
     # Pick the frameworks you want:
     require "active_record/railtie"
     ...
-# `config/globals.yml`
+## `config/globals.yml`
     development:
       host: localhost:3000
       ...
