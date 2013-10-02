@@ -37,6 +37,10 @@ class Globals
     end
   end
 
+  def to_hash
+    @globals
+  end
+
   private
 
   def define_accessors
