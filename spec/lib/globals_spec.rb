@@ -24,7 +24,7 @@ describe Globals do
       Globals.read(globals_file, 'test').to_hash.should be_empty
     end
 
-    it 'should assume that the default environment is `development` if Rails.env is not defined.' do
+    it 'should assume that the default environment is `development` if one is not specified.' do
       development_configs = random_hash
       test_configs = random_hash
 

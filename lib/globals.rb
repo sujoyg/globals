@@ -1,10 +1,8 @@
 require 'erb'
 require 'yaml'
 
-ENVIRONMENT = defined?(Rails) ? Rails.env : 'development'
-
 class Globals
-  def self.read(globals_file, env=ENVIRONMENT)
+  def self.read(globals_file, env='development')
     raise "#{globals_file} does not exist." unless File.exists? globals_file
 
     env = env.to_s

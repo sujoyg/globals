@@ -1,3 +1,6 @@
+# 0.1.2
+  * Bug: Remove all dependencies on Rails.
+
 # 0.1.1
   * Bug: Do not crash if an environment is not defined.
 
