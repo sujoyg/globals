@@ -1,3 +1,6 @@
+# 0.1.1
+  * Bug: Do not crash if an environment is not defined.
+
 # 0.0.2
   * Feature: Crash if the globals file does not exist.
 

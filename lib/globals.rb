@@ -1,17 +1,15 @@
 require 'erb'
-require 'rails'
+require 'yaml'
+
+ENVIRONMENT = defined?(Rails) ? Rails.env : 'development'
 
 class Globals
-  def self.read(globals_file, env=Rails.env)
-    raise "#{global_file} does not exist." unless File.exists? globals_file
+  def self.read(globals_file, env=ENVIRONMENT)
+    raise "#{globals_file} does not exist." unless File.exists? globals_file
 
     env = env.to_s
     yaml = YAML.load ERB.new(File.read globals_file).result
-    if yaml && yaml.include?(env)
-       new(yaml[env], env)
-    else
-      raise "Globals were not defined for environment: #{env} in #{globals_file}"
-    end
+    new(yaml[env] || {}, env)
   end
 
   def initialize(globals, env)

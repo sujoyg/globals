@@ -1,4 +1,7 @@
 require 'fakefs/spec_helpers'
+require 'specstar/support/random'
+
+Dir[File.expand_path('../support/**/*.rb', __FILE__)].each {|f| require f}
 
 RSpec.configure do |config|
   config.before do
@@ -6,7 +9,6 @@ RSpec.configure do |config|
   end
 
   config.after do
-    Dir['/**/'].sort.reverse.each { |dir| Dir.rmdir(dir) }
     FakeFS.deactivate!
   end
 end
