@@ -1,3 +1,6 @@
+# 0.1.3
+  * Feature: Support for defaults available in all environments, whether or not explicitly defined.
+
 # 0.1.2
   * Bug: Remove all dependencies on Rails.
 

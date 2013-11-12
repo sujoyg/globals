@@ -19,6 +19,9 @@
     require "active_record/railtie"
     ...
 ## `config/globals.yml`
+    defaults:
+      application: AwesomeApp
+
     development:
       host: localhost:3000
       ...
@@ -32,4 +35,4 @@
       ...
 
 You can now use these constants anywhere in your application, even in the initializers. In the above example,
-`$globals.host` will return `localhost:3000` in development, `myhost.com` in production and `test.host` in test.
+`$globals.host` will return `localhost:3000` in development, `myhost.com` in production and `test.host` in test. Configs specified under the defaults section are available in every environment and can be overridden for specific environments.

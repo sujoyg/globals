@@ -1,13 +1,33 @@
 require 'erb'
 require 'yaml'
 
+class Hash
+  def recursive_merge!(that)
+    that.each_pair do |k, v|
+      if v.is_a? Hash
+        self[k] ||= {}
+        self[k].recursive_merge!(v)
+      else
+        self[k] = v
+      end
+    end
+  end
+end
+
 class Globals
+  def self.load(globals_file, env)
+    yaml = YAML.load ERB.new(File.read globals_file).result
+    globals = yaml['defaults'] || {}
+    globals.recursive_merge!(yaml[env] || {})
+    globals
+  end
+
   def self.read(globals_file, env='development')
     raise "#{globals_file} does not exist." unless File.exists? globals_file
 
-    env = env.to_s
-    yaml = YAML.load ERB.new(File.read globals_file).result
-    new(yaml[env] || {}, env)
+    globals = load(globals_file, env)
+
+    new(globals, env)
   end
 
   def initialize(globals, env)
@@ -25,12 +45,16 @@ class Globals
   end
 
   def override(override_file_path)
-    overrides = YAML.load(ERB.new(File.read(override_file_path)).result)[@environment]
+    puts "Override file is " + override_file_path
+    overrides = self.class.load(override_file_path, @environment)
+
     if overrides
       @cache.clear
-      recursive_merge @globals, overrides
+      @globals.recursive_merge! overrides
       define_accessors
     end
+
+    self
   end
 
   def to_hash
@@ -52,7 +76,7 @@ class Globals
     end
   end
 
-  def recursive_merge(a, b)
+  def self.recursive_merge(a, b)
     b.each_pair do |k, v|
       if v.is_a? Hash
         a[k] ||= {}
