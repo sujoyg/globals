@@ -4,8 +4,7 @@ require 'yaml'
 class Hash
   def recursive_merge!(that)
     that.each_pair do |k, v|
-      if v.is_a? Hash
-        self[k] ||= {}
+      if v.is_a?(Hash) && self[k].is_a?(Hash)
         self[k].recursive_merge!(v)
       else
         self[k] = v
@@ -15,42 +14,40 @@ class Hash
 end
 
 class Globals
-  def self.load(globals_file, env)
-    yaml = YAML.load ERB.new(File.read globals_file).result
-    globals = yaml['defaults'] || {}
-    globals.recursive_merge!(yaml[env] || {})
-    globals
-  end
-
-  def self.read(globals_file, env='development')
-    raise "#{globals_file} does not exist." unless File.exists? globals_file
-
-    globals = load(globals_file, env)
-
-    new(globals, env)
-  end
-
-  def initialize(globals, env)
-    @globals = globals
+  def initialize(hash, env)
+    @globals = hash
     @environment = env
     @cache = {}
-
-    unless @globals["feature"].nil?
-      @globals["feature"].each_pair do |k, v|
-        raise "A feature can only be true or false." if ![true, false].include?(v)
-      end
-    end
 
     define_accessors
   end
 
+  def self.load(filename, env)
+    yaml = YAML.load ERB.new(File.read filename).result
+    hash = yaml['defaults'] || {}
+    hash.recursive_merge!(yaml[env] || {})
+
+    unless hash["feature"].nil?
+      hash["feature"].each_pair do |k, v|
+        raise "A feature can only be true or false." if ![true, false].include?(v)
+      end
+    end
+
+    hash
+  end
+
+  def self.read(filename, env='development')
+    env = env.to_s
+    hash = load(filename, env)
+    new(hash, env)
+  end
+
   def override(override_file_path)
-    puts "Override file is " + override_file_path
     overrides = self.class.load(override_file_path, @environment)
 
     if overrides
-      @cache.clear
       @globals.recursive_merge! overrides
+      @cache.clear
       define_accessors
     end
 
@@ -72,17 +69,6 @@ class Globals
         else
           value
         end
-      end
-    end
-  end
-
-  def self.recursive_merge(a, b)
-    b.each_pair do |k, v|
-      if v.is_a? Hash
-        a[k] ||= {}
-        recursive_merge(a[k], v)
-      else
-        a[k] = v
       end
     end
   end

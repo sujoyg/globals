@@ -6,7 +6,7 @@ describe Globals do
   describe '.read' do
     let!(:globals_file) { random_text }
 
-    it 'should work for an environment that is defined in the globals file.' do
+    it 'should set settings for an environment to that defined in the file.' do
       configs = random_hash
 
       File.open(globals_file, 'w') do |f|
@@ -16,7 +16,7 @@ describe Globals do
       Globals.read(globals_file, 'development').to_hash.should == configs
     end
 
-    it 'should work for an environment that is not defined in the globals file.' do
+    it 'should set settings to empty for an environment not defined in the file.' do
       File.open(globals_file, 'w') do |f|
         f.write YAML.dump('development' => random_hash)
       end

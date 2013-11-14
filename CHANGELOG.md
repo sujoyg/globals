@@ -1,3 +1,6 @@
+# 0.1.4
+  * Bug: Settings were null if environment was specified as a symbol instead of a string.
+
 # 0.1.3
   * Feature: Support for defaults available in all environments, whether or not explicitly defined.
 
