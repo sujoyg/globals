@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'globals'
-  s.version     = '0.1.4'
+  s.version     = '0.2.0'
   s.date        = Time.now.to_date
   s.summary     = 'A simple way to define globals for use in a Ruby application.'
   s.description = 'A simple way to define globals for use in a Ruby application.'

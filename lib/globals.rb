@@ -22,8 +22,8 @@ class Globals
     define_accessors
   end
 
-  def self.load(filename, env)
-    yaml = YAML.load ERB.new(File.read filename).result
+  def self.load(content, env)
+    yaml = YAML.load ERB.new(content).result
     hash = yaml['defaults'] || {}
     hash.recursive_merge!(yaml[env] || {})
 
@@ -36,14 +36,14 @@ class Globals
     hash
   end
 
-  def self.read(filename, env='development')
+  def self.read(content, env='development')
     env = env.to_s
-    hash = load(filename, env)
+    hash = load(content, env)
     new(hash, env)
   end
 
-  def override(override_file_path)
-    overrides = self.class.load(override_file_path, @environment)
+  def override(override_content)
+    overrides = self.class.load(override_content, @environment)
 
     if overrides
       @globals.recursive_merge! overrides

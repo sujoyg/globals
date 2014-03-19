@@ -1,3 +1,6 @@
+# 0.2.0
+  * Incompatible change: Globals.read takes a string instead of file name.
+
 # 0.1.4
   * Bug: Settings were null if environment was specified as a symbol instead of a string.
 
