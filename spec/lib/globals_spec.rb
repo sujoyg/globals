@@ -13,7 +13,7 @@ describe Globals do
         f.write YAML.dump('development' => configs)
       end
 
-      Globals.read(globals_file, 'development').to_hash.should == configs
+      Globals.read(File.read(globals_file), 'development').to_hash.should == configs
     end
 
     it 'should set settings to empty for an environment not defined in the file.' do
@@ -21,7 +21,7 @@ describe Globals do
         f.write YAML.dump('development' => random_hash)
       end
 
-      Globals.read(globals_file, 'test').to_hash.should be_empty
+      Globals.read(File.read(globals_file), 'test').to_hash.should be_empty
     end
 
     it 'should assume that the default environment is `development` if one is not specified.' do
@@ -33,7 +33,7 @@ describe Globals do
       end
 
       defined?(Rails).should be_nil
-      Globals.read(globals_file).to_hash.should == development_configs
+      Globals.read(File.read(globals_file)).to_hash.should == development_configs
     end
 
     it 'should raise an error if a feature is not boolean.' do
@@ -41,7 +41,7 @@ describe Globals do
         f.write YAML.dump('test' => {'feature' => {'foo' => true, 'bar' => false, 'baz' => 'a'}})
       end
 
-      lambda { Globals.read(globals_file, 'test') }.should raise_error('A feature can only be true or false.')
+      lambda { Globals.read(File.read(globals_file), 'test') }.should raise_error('A feature can only be true or false.')
     end
 
     it 'should not raise any error if all features are boolean.' do
@@ -49,7 +49,19 @@ describe Globals do
         f.write YAML.dump('test' => {'feature' => {'foo' => true, 'bar' => false, 'baz' => true}})
       end
 
-      lambda { Globals.read(globals_file, 'test') }.should_not raise_error
+      lambda { Globals.read(File.read(globals_file), 'test') }.should_not raise_error
+    end
+
+    it 'substitutes env for the environment.' do
+      File.open(globals_file, 'w') do |f|
+        f.write YAML.dump('test' => {'foo' => '<%= env %>'}, 'development' => {'foo' => '<%= env %>'})
+      end
+
+      globals = Globals.read(File.read(globals_file), 'test')
+      expect(globals.foo).to eq 'test'
+
+      globals = Globals.read(File.read(globals_file), 'development')
+      expect(globals.foo).to eq 'development'
     end
   end
 
@@ -60,18 +72,15 @@ describe Globals do
         f.write YAML.dump({'development' => {'company' => 'Google', 'feature' => {'debug' => true, 'solr' => true}}})
       end
 
-      File.open('overrides.yml', 'w') do |f|
-        f.write YAML.dump({'development' => {'company' => 'Yahoo!', 'feature' => {'solr' => false}}})
-      end
-
-      @globals = Globals.read(globals_file, 'development')
+      @globals = Globals.read(File.read(globals_file), 'development')
+      @overrides = YAML.dump({'development' => {'company' => 'Yahoo!', 'feature' => {'solr' => false}}})
     end
 
     it 'overrides fields specified in the file' do
       @globals.company.should == 'Google'
       @globals.feature.solr.should be_true
 
-      @globals.override('overrides.yml')
+      @globals.override @overrides
 
       @globals.company.should == 'Yahoo!'
       @globals.feature.solr.should be_false
@@ -79,7 +88,7 @@ describe Globals do
 
     it 'does not override fields not specified in the file' do
       @globals.feature.debug.should be_true
-      @globals.override('overrides.yml')
+      @globals.override @overrides
       @globals.feature.debug.should be_true
     end
   end

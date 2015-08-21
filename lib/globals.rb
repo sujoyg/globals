@@ -23,7 +23,7 @@ class Globals
   end
 
   def self.load(content, env)
-    yaml = YAML.load ERB.new(content).result
+    yaml = YAML.load ERB.new("<% env='#{env}' %>" + content).result
     hash = yaml['defaults'] || {}
     hash.recursive_merge!(yaml[env] || {})
 
