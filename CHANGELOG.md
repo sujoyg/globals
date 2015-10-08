@@ -1,3 +1,6 @@
+# 1.0.0
+  * Feature: Allow variables of the form %{foo} to be substituted using a supplied hash.
+
 # 0.2.0
   * Incompatible change: Globals.read takes a string instead of file name.
 

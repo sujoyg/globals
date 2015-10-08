@@ -22,8 +22,9 @@ class Globals
     define_accessors
   end
 
-  def self.load(content, env)
-    yaml = YAML.load ERB.new("<% env='#{env}' %>" + content).result
+  def self.load(content, env, variables={})
+    erb = ERB.new(content).result
+    yaml = YAML.load(erb % variables)
     hash = yaml['defaults'] || {}
     hash.recursive_merge!(yaml[env] || {})
 
@@ -36,9 +37,9 @@ class Globals
     hash
   end
 
-  def self.read(content, env='development')
+  def self.read(content, env='development', variables={})
     env = env.to_s
-    hash = load(content, env)
+    hash = load(content, env, variables)
     new(hash, env)
   end
 

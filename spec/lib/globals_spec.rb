@@ -52,16 +52,12 @@ describe Globals do
       lambda { Globals.read(File.read(globals_file), 'test') }.should_not raise_error
     end
 
-    it 'substitutes env for the environment.' do
+    it 'substitutes variables of the form %{var} using the suppliedsupplied hash.' do
       File.open(globals_file, 'w') do |f|
-        f.write YAML.dump('test' => {'foo' => '<%= env %>'}, 'development' => {'foo' => '<%= env %>'})
+        f.write YAML.dump('test' => {'key' => 'my value is %{value}'})
       end
 
-      globals = Globals.read(File.read(globals_file), 'test')
-      expect(globals.foo).to eq 'test'
-
-      globals = Globals.read(File.read(globals_file), 'development')
-      expect(globals.foo).to eq 'development'
+      expect(Globals.read(File.read(globals_file), 'test', {value: 'foo'}).to_hash).to eq({'key' => 'my value is foo'})
     end
   end
 
