@@ -1,3 +1,6 @@
+# 1.0.1
+  * Feature: Missing attributes are nil.
+
 # 1.0.0
   * Feature: Allow variables of the form %{foo} to be substituted using a supplied hash.
 

@@ -88,4 +88,11 @@ describe Globals do
       @globals.feature.debug.should be_true
     end
   end
+
+  it 'returns nil for missing fields' do
+    globals = Globals.new({foo: {bar: {baz: true}}}, nil)
+
+    expect(globals.foo.bar.baz).to eq true
+    expect(globals.foo.bar.quux).to be_nil
+  end
 end

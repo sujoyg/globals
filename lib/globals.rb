@@ -43,6 +43,10 @@ class Globals
     new(hash, env)
   end
 
+  def method_missing(field)
+    nil
+  end
+
   def override(override_content)
     overrides = self.class.load(override_content, @environment)
 
